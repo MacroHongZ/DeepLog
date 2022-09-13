@@ -1,6 +1,8 @@
 # DeepLog
 极简的深度学习日志记录工具
 
+[简易文档](https://www.mdnice.com/writing/51a2c557ad504acc8f8e036d1c79759c)
+
 # 安装
 1. 下载源码
 
