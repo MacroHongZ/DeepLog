@@ -28,6 +28,10 @@ class Config():
     def save(self, file):
         pickle.dump(self, file)
 
+    def from_argparse(self, args):
+        parameters = args.__dict__
+        self.__dict__.update(parameters)
+
 
 class DeepLog():
 
