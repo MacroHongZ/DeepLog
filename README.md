@@ -25,7 +25,7 @@ pip list
 from deeplog import DeepLog, Config
 
 # 初始化
-Log = DeepLog()
+Log = DeepLog(save_path="path") # the 'save_path' parameter sets the parent directory where the log files are saved.
 config = Config()
 
 # 配置模型超参数
