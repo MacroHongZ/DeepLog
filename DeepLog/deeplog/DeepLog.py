@@ -22,8 +22,10 @@ class Config():
 
     def print_parameters(self):
         parameters = self.get_parameters()
+        print("=" * 25)
         for key, value in parameters.items():
             print(key, ": ", value)
+        print("=" * 25)
 
     def save(self, file):
         pickle.dump(self, file)
@@ -35,10 +37,8 @@ class Config():
 
 class DeepLog():
 
-    def __init__(self, project_name="MyProject"):
-
-        self.project_name = project_name
-        self.path = self.project_name + "_log"
+    def __init__(self, save_path="output_file"):
+        self.path = save_path + "/log"
         self.logs = collections.defaultdict(list)
 
     def log(self, name, value):
@@ -112,10 +112,10 @@ class DeepLog():
                 if begin:
                     lines.append(line.strip())
         lines = lines[1:]
-        for i in range(int(len(lines)/2)):
-            value = lines[2*i+1].split(", ")
+        for i in range(int(len(lines) / 2)):
+            value = lines[2 * i + 1].split(", ")
             value = [eval(v) for v in value]
-            logs[lines[2*i]].extend(value)
+            logs[lines[2 * i]].extend(value)
 
         self.logs = logs
 
@@ -143,3 +143,6 @@ class DeepLog():
                 self.draw(key)
         else:
             self.draw(item)
+
+
+
