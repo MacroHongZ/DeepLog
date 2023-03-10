@@ -1,25 +1,19 @@
 # DeepLog
 极简的深度学习日志记录工具
 
-[简易文档](https://www.mdnice.com/writing/51a2c557ad504acc8f8e036d1c79759c)
-
 # 安装
-1. 下载源码
-
-开源地址：https://github.com/MacroHongZ/DeepLog
-
-2. 本地安装
+1. 本地安装
 ```python
 # 需先进入源码文件夹
 python setup.py install
 ```
-3. 查看安装
+2. 查看安装
 ```python
 pip list
 # 可以看到包名 deeplog
 ```
-# 主要功能
 
+# 主要功能
 
 ```python
 from deeplog import DeepLog, Config
@@ -69,13 +63,4 @@ Log.load_logs('MyProject_log//2022-09-13_14-54-56log.txt')
 Log.visualization(item="loss")
 ```
 
-# 日志展示
-
-![](https://files.mdnice.com/user/13441/2aaf7255-1020-40d2-8bcd-a4ebba31fb36.png)
-
-![](https://files.mdnice.com/user/13441/4eadc9c3-468a-4fbb-8eb4-1d34d7a54ad0.png)
-
-# 绘图展示
-
-![](https://files.mdnice.com/user/13441/a8d59bc9-dd4f-443b-ac78-054f0bfc831e.png)
 
