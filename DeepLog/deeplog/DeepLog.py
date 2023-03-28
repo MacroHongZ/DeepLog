@@ -49,49 +49,34 @@ class DeepLog():
 
         return self.logs.keys()
 
-    @staticmethod
-    def transDD(defaultdict):
-        dic = {}
-        for i, j in defaultdict.items():
-            dic[i] = j
-
-        return dic
-
-    def save(self, config=None, config_save=False, type="txt"):
+    def save(self, config=None, config_save=False):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
         mytime = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
 
-        if type == "txt":
-            log_file_name = mytime + 'log.txt'
-            file_path = self.path + "/" + log_file_name
+        log_file_name = mytime + 'log.txt'
+        file_path = self.path + "/" + log_file_name
 
-            with open(file_path, "w+") as fp:
-                if config != None:
-                    hyperparameters = config.get_parameters()
-                    for key, value in hyperparameters.items():
-                        fp.write(key + ": " + str(value))
-                        fp.write("\n")
-                    fp.write("=" * 50)
+        with open(file_path, "w+") as fp:
+            if config != None:
+                hyperparameters = config.get_parameters()
+                for key, value in hyperparameters.items():
+                    fp.write(key + ": " + str(value))
                     fp.write("\n")
 
-                for key, value in self.logs.items():
-                    fp.write(key)
-                    fp.write("\n")
-                    fp.write(str(value)[1:-1])
-                    fp.write("\n")
+            for key, value in self.logs.items():
+                fp.write("=" * 50)
+                fp.write("\n")
+                fp.write(key)
+                fp.write("\n")
+                fp.write(str(value)[1:-1])
+                fp.write("\n")
 
-            if config_save:
-                config_file_path = self.path + "/" + mytime + 'config.pickle'
-                with open(config_file_path, "wb") as fp:
-                    config.save(fp)
-        else:
-            log_file_name = mytime + 'log.pickle'
-            file_path = self.path + "/" + log_file_name
-
-            with open(file_path, "wb") as fp:
-                pickle.dump(self.transDD(self.logs), fp)
+        if config_save:
+            config_file_path = self.path + "/" + mytime + 'config.pickle'
+            with open(config_file_path, "wb") as fp:
+                config.save(fp)
 
     def load_config(self, file_name):
 
@@ -111,21 +96,26 @@ class DeepLog():
                     begin = True
                 if begin:
                     lines.append(line.strip())
-        lines = lines[1:]
-        for i in range(int(len(lines) / 2)):
-            value = lines[2 * i + 1].split(", ")
-            value = [eval(v) for v in value]
-            logs[lines[2 * i]].extend(value)
+
+        for i in range(int(len(lines) / 3)):
+            # value = lines[3 * i + 2].split(", ")
+            value = lines[3 * i + 2]
+            if value[0] not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                continue
+            else:
+                value = value.split(", ")
+                value = [eval(v) for v in value]
+                logs[lines[3 * i + 1]].extend(value)
 
         self.logs = logs
 
-    def draw(self, key):
+    def _draw(self, key):
         if key not in self.logs:
             raise ValueError("key not exist")
         matplotlib.rcParams['font.family'] = 'serif'
         plt.style.use('ggplot')
 
-        fig = plt.figure(dpi=100)
+        fig = plt.figure(dpi=200)
         ax = fig.subplots()
         line1 = ax.plot(self.logs[key])
 
@@ -136,13 +126,27 @@ class DeepLog():
 
         plt.show()
 
-    def visualization(self, item="all"):
-
+    def visualization(self, item):
         if item == "all":
             for key in self.logs.keys():
-                self.draw(key)
+                self._draw(key)
         else:
-            self.draw(item)
+            self._draw(item)
 
+    def save_list(self, file_name):
+        '''
+        Only one key is in self.logs
+        '''
 
+        file_path = self.path + "/" + file_name
 
+        li = list(self.logs.values())
+        li = li[0]
+        with open(file_path, "w+") as fp:
+            for line in li:
+                if isinstance(line, list) or isinstance(line, dict):
+                    fp.write(str(line)[1:-1])
+                    fp.write("\n")
+                else:
+                    fp.write(str(line))
+                    fp.write("\n")
