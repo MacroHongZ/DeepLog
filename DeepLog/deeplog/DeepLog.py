@@ -8,6 +8,7 @@ import collections
 import os
 import pickle
 import time
+import random
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -37,8 +38,8 @@ class Config():
 
 class DeepLog():
 
-    def __init__(self, save_path="output_file"):
-        self.path = save_path + "/log"
+    def __init__(self, save_path="output_files"):
+        self.path = save_path + "/log/"
         self.logs = collections.defaultdict(list)
 
     def log(self, name, value):
@@ -56,7 +57,7 @@ class DeepLog():
         mytime = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
 
         log_file_name = mytime + 'log.txt'
-        file_path = self.path + "/" + log_file_name
+        file_path = self.path + log_file_name
 
         with open(file_path, "w+") as fp:
             if config != None:
@@ -74,13 +75,15 @@ class DeepLog():
                 fp.write("\n")
 
         if config_save:
-            config_file_path = self.path + "/" + mytime + 'config.pickle'
+            config_file_path = self.path + mytime + 'config.pickle'
             with open(config_file_path, "wb") as fp:
                 config.save(fp)
 
+        return log_file_name
+
     def load_config(self, file_name):
 
-        config_file_path = self.path + "/" + file_name
+        config_file_path = self.path + file_name
         with open(config_file_path, "rb") as fp:
             config = pickle.load(fp)
         return config
@@ -109,7 +112,7 @@ class DeepLog():
 
         self.logs = logs
 
-    def _draw(self, key):
+    def _draw(self, key, save_fig=False):
         if key not in self.logs:
             raise ValueError("key not exist")
         matplotlib.rcParams['font.family'] = 'serif'
@@ -124,21 +127,29 @@ class DeepLog():
         ax.tick_params(axis='y', which='both', direction='in', right=False)
         ax.tick_params(axis='x', which='both', bottom="in", top=False)
 
-        plt.show()
 
-    def visualization(self, item):
+        if save_fig:
+            current_time = int(time.time())
+            random.seed(current_time)
+            random_number = random.randint(100, 999)
+            fig_name = key + str(random_number) + ".png"
+            plt.savefig(self.path + fig_name)
+        else:
+            plt.show()
+
+    def visualization(self, item, save_fig=False):
         if item == "all":
             for key in self.logs.keys():
-                self._draw(key)
+                self._draw(key, save_fig)
         else:
-            self._draw(item)
+            self._draw(item, save_fig)
 
     def save_list(self, file_name):
         '''
         Only one key is in self.logs
         '''
 
-        file_path = self.path + "/" + file_name
+        file_path = self.path + file_name
 
         li = list(self.logs.values())
         li = li[0]
