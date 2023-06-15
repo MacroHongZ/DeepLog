@@ -40,6 +40,7 @@ class DeepLog():
 
     def __init__(self, save_path="output_files"):
         self.path = save_path + "/log/"
+        self.log_file_name = None
         self.logs = collections.defaultdict(list)
 
     def log(self, name, value):
@@ -54,10 +55,11 @@ class DeepLog():
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
-        mytime = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+        if self.log_file_name is None:
+            mytime = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+            self.log_file_name = mytime + 'log.txt'
 
-        log_file_name = mytime + 'log.txt'
-        file_path = self.path + log_file_name
+        file_path = self.path + self.log_file_name
 
         with open(file_path, "w+") as fp:
             if config != None:
@@ -75,11 +77,9 @@ class DeepLog():
                 fp.write("\n")
 
         if config_save:
-            config_file_path = self.path + mytime + 'config.pickle'
+            config_file_path = file_path[:-7] + 'config.pickle'
             with open(config_file_path, "wb") as fp:
                 config.save(fp)
-
-        return log_file_name
 
     def load_config(self, file_name):
 
@@ -101,7 +101,6 @@ class DeepLog():
                     lines.append(line.strip())
 
         for i in range(int(len(lines) / 3)):
-            # value = lines[3 * i + 2].split(", ")
             value = lines[3 * i + 2]
             if value[0] not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                 continue
@@ -126,7 +125,6 @@ class DeepLog():
         plt.setp(line1, c='#72aa9d')
         ax.tick_params(axis='y', which='both', direction='in', right=False)
         ax.tick_params(axis='x', which='both', bottom="in", top=False)
-
 
         if save_fig:
             current_time = int(time.time())
