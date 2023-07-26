@@ -35,6 +35,9 @@ class Config():
         parameters = args.__dict__
         self.__dict__.update(parameters)
 
+    def from_dict(self, d):
+        self.__dict__.update(d)
+
 
 class DeepLog():
 
