@@ -7,9 +7,6 @@ import matplotlib
 
 
 class Config:
-    def __init__(self):
-        pass
-
     def get_parameters(self):
         return self.__dict__
 
@@ -27,12 +24,18 @@ class Config:
     def from_dict(self, d):
         self.__dict__.update(d)
 
+    def __setattr__(self, key, value):
+        if key in self.__dict__:
+            raise AttributeError("Can't modify attribute")
+        else:
+            self.__dict__[key] = value
+
 
 class DeepLog:
     def __init__(self, save_path="output_files"):
         self.path = save_path + "/log/"
         self.log_file_name = (
-            time.strftime("%Y%m%d_%H:%M:%S", time.localtime()) + "log.txt"
+                time.strftime("%Y%m%d_%H-%M-%S", time.localtime()) + "log.txt"
         )
         self.logs = collections.defaultdict(list)
 
@@ -89,7 +92,7 @@ class DeepLog:
         ax.tick_params(axis="x", which="both", bottom="in", top=False)
 
         if save_fig:
-            current_time = time.strftime("%Y%m%d_%H:%M:%S", time.localtime())
+            current_time = time.strftime("%Y%m%d_%H-%M-%S", time.localtime())
             fig_name = key + current_time + ".png"
             plt.savefig(self.path + fig_name)
         else:
